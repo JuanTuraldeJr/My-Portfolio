@@ -174,9 +174,11 @@
   const mobileMenu = document.getElementById('mobile-menu');
   const menuLinks = mobileMenu.querySelectorAll('a');
 
-  menuBtn.addEventListener('click', () => {
-    mobileMenu.classList.toggle('hidden');
-  });
+  if (menuBtn) {
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  }
 
   menuLinks.forEach(link => {
     link.addEventListener('click', () => {
@@ -187,11 +189,14 @@
   const form = document.getElementById('contactForm');
   const successMsg = document.getElementById('successMsg');
 
-  if (form) { 
+  if (form) {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      // Collect form data
       const formData = new FormData(form);
+      // Important for Netlify to recognize the form
+      formData.append('form-name', 'contact');
 
       try {
         const res = await fetch('/', {
@@ -199,11 +204,13 @@
           body: formData,
         });
 
+        console.log('Response status:', res.status);
+
         if (res.ok) {
           form.reset();
           successMsg.classList.remove('hidden');
 
-          // Auto-hide after 5 seconds
+          // Auto-hide success message after 5 seconds
           setTimeout(() => {
             successMsg.classList.add('hidden');
           }, 5000);
@@ -212,6 +219,7 @@
           alert('Oops! Something went wrong.');
         }
       } catch (error) {
+        console.error('Error submitting form:', error);
         alert('Error submitting form');
       }
     });
